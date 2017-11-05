@@ -1,5 +1,4 @@
 grid = []
-game = True # game loop
 
 # create an empty grid
 def init():
@@ -24,7 +23,7 @@ def casevide(grid, i, j):
         else:
             return False
     except IndexError:
-        return 'wrong place'
+        return False
 
 # get the user input and place X on the location choosen by the user
 # if the validation is OK
@@ -39,6 +38,9 @@ def choixjoueur(grid):
     print(i,j)
     if casevide(grid, i, j) == True:
         grid[i][j] = 'X'
+    else:
+        print('wrong place, choose again')
+        choixjoueur(grid)
 
 def choixmachine(grid):
     import random as rd
@@ -57,17 +59,52 @@ def gridplein(grid):
             return False
     return True
 
-def gagne(grid, char):
-    
+# check the grid for winner every turn
+# compare each point in the grid to the points next to it
+# if the points has the same X or O then declare winner and exit
+def winner(grid, char):
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            # check for horizantal alignement (X-X-X or O-O-O)
+            if j == 0:
+                if char == grid[i][j] and char == grid[i][j+1] and char == grid[i][j+2]:
+                    return True
+            if j == 1:
+                if char == grid[i][j] and char == grid[i][j-1] and char == grid[i][j+1]:
+                    return True
+            if j == 1:
+                if char == grid[i][j] and char == grid[i][j-1] and char == grid[i][j-2]:
+                    return True
+        # check for vertical alignement
+        # X or O
+        # X or O
+        # X or O
+        if i == 0:
+            if char == grid[i] and char == grid[i+1] and char == grid[i+2]:
+                return True
+        if i == 1:
+            if char == grid[i] and char == grid[i-1] and char == grid[i+1]:
+                return True
+        if i == 1:
+            if char == grid[i] and char == grid[i-1] and char == grid[i-2]:
+                True
 
 init()
 
-#choixjoueur(grid)
-for _ in range(15):
+while True:
+    choixjoueur(grid)
+    
+    if winner(grid, 'X') == True:
+        affiche(grid)
+        print('Winner => user')
+        break
     choixmachine(grid)
     if gridplein(grid) == False:
+        if winner(grid, 'O') == True:
+            print('Winner => computer')
+            break
         affiche(grid)
     else:
         affiche(grid)
-        print('grid full')
+        print('No Winner')
         break
